@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.movieapp.domain.model.Movie
 import com.example.movieapp.domain.repository.MovieRepository
 import com.example.movieapp.domain.use_cases.PosterUseCase
-import com.example.movieapp.utils.Resource
+import com.example.movieapp.di.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow

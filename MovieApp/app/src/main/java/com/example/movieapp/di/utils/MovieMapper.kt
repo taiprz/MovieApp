@@ -1,6 +1,6 @@
-package com.example.movieapp.utils
+package com.example.movieapp.di.utils
 import com.example.movieapp.DTOs.MovieDTO
-import com.example.movieapp.Entities.MovieEntity
+import com.example.movieapp.entities.MovieEntity
 import com.example.movieapp.domain.model.Movie
 import kotlin.collections.emptyList
 import kotlin.text.split

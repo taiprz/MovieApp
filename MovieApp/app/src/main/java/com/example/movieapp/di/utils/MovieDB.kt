@@ -1,9 +1,9 @@
-package com.example.movieapp.utils
+package com.example.movieapp.di.utils
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.example.movieapp.DAO.MovieDAO
-import com.example.movieapp.Entities.MovieEntity
+import com.example.movieapp.entities.MovieEntity
 
 
 // database where movies are stored

@@ -1,4 +1,4 @@
-package com.example.movieapp.utils
+package com.example.movieapp.di.utils
 
 object Category
 {

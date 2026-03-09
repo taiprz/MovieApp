@@ -4,7 +4,7 @@ import android.app.Application
 import androidx.room.Room
 import com.example.movieapp.DAO.MovieDAO
 import com.example.movieapp.services.MovieAPI
-import com.example.movieapp.utils.MovieDB
+import com.example.movieapp.di.utils.MovieDB
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -28,6 +28,7 @@ object AppModule {
         .addInterceptor(interceptor)
         .build()
 
+    // api connection
     @Provides
     @Singleton
     fun providesMovieApi() : MovieAPI {
@@ -40,6 +41,7 @@ object AppModule {
     }
 
 
+    // db connection
     @Provides
     @Singleton
     fun providesMovieDB(app: Application) : MovieDB {
@@ -50,7 +52,9 @@ object AppModule {
         ).build()
     }
 
+    // db results
     @Provides
+    @Singleton
     fun provideMovieDAO(database: MovieDB): MovieDAO {
         return database.movieDao
     }

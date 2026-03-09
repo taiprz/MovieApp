@@ -1,4 +1,4 @@
-package com.example.movieapp.ui.ViewModels
+package com.example.movieapp.ui.home
 
 sealed interface MovieListEvents {
 

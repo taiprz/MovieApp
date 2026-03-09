@@ -4,11 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.movieapp.domain.model.Movie
 import com.example.movieapp.domain.use_cases.PosterUseCase
-import com.example.movieapp.repository.MovieListRepository
-import com.example.movieapp.ui.ViewModels.MovieListEvents
-import com.example.movieapp.ui.ViewModels.MovieListState
-import com.example.movieapp.utils.Category
-import com.example.movieapp.utils.Resource
+import com.example.movieapp.domain.repository.MovieListRepository
+import com.example.movieapp.di.utils.Category
+import com.example.movieapp.di.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,8 +19,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val movieListRepository: MovieListRepository,
-   private val posterUseCase: PosterUseCase
+    private val movieListRepository: MovieListRepository, private val posterUseCase: PosterUseCase
 ) : ViewModel() {
 
     private var _movieListState = MutableStateFlow(MovieListState())
@@ -93,22 +90,20 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-     fun loadPoster(movie : Movie): String {
-       return posterUseCase.loadPoster(movie)
+    fun loadPoster(movie: Movie): String {
+        return posterUseCase.loadPoster(movie)
     }
 
     @OptIn(FlowPreview::class)
     private fun observeSearch() {
         viewModelScope.launch {
-            _searchText
-                .debounce(500)
-                .collectLatest { query ->
-                if (query.isNotBlank()) {
-                    resultsFromSearchList(query)
-                } else {
-                    getPopularMoviesList()
+            _searchText.debounce(500).collectLatest { query ->
+                    if (query.isNotBlank()) {
+                        resultsFromSearchList(query)
+                    } else {
+                        getPopularMoviesList()
+                    }
                 }
-            }
         }
     }
 

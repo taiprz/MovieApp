@@ -37,10 +37,7 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.movieapp.R
 import com.example.movieapp.domain.model.Movie
-import com.example.movieapp.domain.use_cases.PosterUseCase
-import com.example.movieapp.services.MovieAPI
-import com.example.movieapp.ui.favorites.FavoritesViewModel
-import com.example.movieapp.utils.Screen
+import com.example.movieapp.di.utils.Screen
 
 
 @Composable

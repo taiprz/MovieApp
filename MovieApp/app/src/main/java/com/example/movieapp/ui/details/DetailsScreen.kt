@@ -72,10 +72,6 @@ fun DetailsView(
         detailState.movie?.let { movie ->
             MovieDetails(movie, navController, detailsViewModel)
         }
-
-        if (!detailState.isLoading && movieId == 0) {
-            ErrorScreen()
-        }
     }
 }
 

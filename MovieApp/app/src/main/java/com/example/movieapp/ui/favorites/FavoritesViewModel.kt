@@ -5,8 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.movieapp.domain.model.Movie
 import com.example.movieapp.domain.repository.MovieRepository
 import com.example.movieapp.domain.use_cases.PosterUseCase
-import com.example.movieapp.repository.MovieListRepository
-import com.example.movieapp.ui.ViewModels.MovieListState
+import com.example.movieapp.domain.repository.MovieListRepository
+import com.example.movieapp.ui.home.MovieListState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

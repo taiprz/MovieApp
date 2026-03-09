@@ -1,4 +1,4 @@
-package com.example.movieapp.ui.ViewModels
+package com.example.movieapp.ui.home
 
 import com.example.movieapp.domain.model.Movie
 
@@ -10,4 +10,3 @@ data class MovieListState(
     val popularMovieList : List<Movie> = emptyList(),
     val favoriteMovieList : List<Movie> = emptyList()
 )
-
