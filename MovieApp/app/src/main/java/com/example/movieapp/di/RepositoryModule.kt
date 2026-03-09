@@ -3,7 +3,7 @@ package com.example.movieapp.di
 import com.example.movieapp.domain.repository.MovieRepository
 import com.example.movieapp.domain.repository.MovieRepositoryImplementation
 import com.example.movieapp.domain.repository.MovieListRepository
-import com.example.movieapp.repository.MovieListRepositoryImplementation
+import com.example.movieapp.domain.repository.MovieListRepositoryImplementation
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

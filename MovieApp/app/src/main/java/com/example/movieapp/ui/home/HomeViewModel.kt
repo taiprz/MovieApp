@@ -2,13 +2,15 @@ package com.example.movieapp.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
 import com.example.movieapp.domain.model.Movie
 import com.example.movieapp.domain.use_cases.PosterUseCase
 import com.example.movieapp.domain.repository.MovieListRepository
-import com.example.movieapp.di.utils.Category
-import com.example.movieapp.di.utils.Resource
+import com.example.movieapp.data.utils.Category
+import com.example.movieapp.data.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -19,12 +21,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val movieListRepository: MovieListRepository, private val posterUseCase: PosterUseCase
+    private val movieListRepository: MovieListRepository,
+    private val posterUseCase: PosterUseCase
 ) : ViewModel() {
 
+    val movies : Flow<PagingData<Movie>> = movieListRepository.getAllMovies()
     private var _movieListState = MutableStateFlow(MovieListState())
     val movieListState = _movieListState.asStateFlow()
-
     private val _searchText = MutableStateFlow("")
     val searchText = _searchText.asStateFlow()
 
@@ -35,11 +38,6 @@ class HomeViewModel @Inject constructor(
 
     fun onEvent(event: MovieListEvents) {
         when (event) {
-            MovieListEvents.Navigate -> {
-                _movieListState.update {
-                    it.copy(isCurrentPopularScreen = !movieListState.value.isCurrentPopularScreen)
-                }
-            }
 
             is MovieListEvents.Paginate -> {
                 if (event.category == Category.POPULAR) {
@@ -48,12 +46,13 @@ class HomeViewModel @Inject constructor(
             }
 
             is MovieListEvents.Search -> {
-                _searchText.value = event.query
+                _searchText.update { event.query }
             }
         }
     }
 
     private fun getPopularMoviesList() {
+
         viewModelScope.launch {
             _movieListState.update {
                 it.copy(isLoading = true)

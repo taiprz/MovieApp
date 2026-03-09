@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">MovieApp</string>
+    <string name="star">star icon\n</string>
+    <string name="like">favorite button</string>
+</resources>

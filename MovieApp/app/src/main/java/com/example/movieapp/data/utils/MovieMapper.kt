@@ -1,4 +1,4 @@
-package com.example.movieapp.di.utils
+package com.example.movieapp.data.utils
 import com.example.movieapp.DTOs.MovieDTO
 import com.example.movieapp.entities.MovieEntity
 import com.example.movieapp.domain.model.Movie
