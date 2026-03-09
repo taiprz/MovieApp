@@ -1,0 +1,145 @@
+package com.example.movieapp.ui.home
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.movieapp.domain.model.Movie
+import com.example.movieapp.domain.use_cases.PosterUseCase
+import com.example.movieapp.repository.MovieListRepository
+import com.example.movieapp.ui.ViewModels.MovieListEvents
+import com.example.movieapp.ui.ViewModels.MovieListState
+import com.example.movieapp.utils.Category
+import com.example.movieapp.utils.Resource
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+@HiltViewModel
+class HomeViewModel @Inject constructor(
+    private val movieListRepository: MovieListRepository,
+   private val posterUseCase: PosterUseCase
+) : ViewModel() {
+
+    private var _movieListState = MutableStateFlow(MovieListState())
+    val movieListState = _movieListState.asStateFlow()
+
+    private val _searchText = MutableStateFlow("")
+    val searchText = _searchText.asStateFlow()
+
+    init {
+        getPopularMoviesList()
+        observeSearch()
+    }
+
+    fun onEvent(event: MovieListEvents) {
+        when (event) {
+            MovieListEvents.Navigate -> {
+                _movieListState.update {
+                    it.copy(isCurrentPopularScreen = !movieListState.value.isCurrentPopularScreen)
+                }
+            }
+
+            is MovieListEvents.Paginate -> {
+                if (event.category == Category.POPULAR) {
+                    getPopularMoviesList()
+                }
+            }
+
+            is MovieListEvents.Search -> {
+                _searchText.value = event.query
+            }
+        }
+    }
+
+    private fun getPopularMoviesList() {
+        viewModelScope.launch {
+            _movieListState.update {
+                it.copy(isLoading = true)
+            }
+
+            movieListRepository.getMovieList(
+                Category.POPULAR, movieListState.value.popularMovieListPage
+            ).collectLatest { result ->
+                when (result) {
+                    is Resource.Error -> {
+                        _movieListState.update {
+                            it.copy(isLoading = false)
+                        }
+                    }
+
+                    is Resource.Loading -> {
+                        _movieListState.update {
+                            it.copy(isLoading = result.isLoading)
+                        }
+                    }
+
+                    is Resource.Success -> {
+                        result.data?.let { popularList ->
+                            _movieListState.update {
+                                it.copy(
+                                    popularMovieList = movieListState.value.popularMovieList + popularList.shuffled(),
+                                    popularMovieListPage = movieListState.value.popularMovieListPage + 1
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+     fun loadPoster(movie : Movie): String {
+       return posterUseCase.loadPoster(movie)
+    }
+
+    @OptIn(FlowPreview::class)
+    private fun observeSearch() {
+        viewModelScope.launch {
+            _searchText
+                .debounce(500)
+                .collectLatest { query ->
+                if (query.isNotBlank()) {
+                    resultsFromSearchList(query)
+                } else {
+                    getPopularMoviesList()
+                }
+            }
+        }
+    }
+
+    private fun resultsFromSearchList(title: String) {
+        viewModelScope.launch {
+            _movieListState.update { it.copy(isLoading = true) }
+
+            movieListRepository.searchMovieByTitle(title, category = Category.POPULAR)
+                .collectLatest { result ->
+                    when (result) {
+                        is Resource.Error -> {
+                            _movieListState.update { it.copy(isLoading = false) }
+                        }
+
+                        is Resource.Loading -> {
+                            _movieListState.update { it.copy(isLoading = result.isLoading) }
+                        }
+
+                        is Resource.Success -> {
+                            result.data?.let { resultList ->
+                                _movieListState.update {
+                                    it.copy(
+                                        popularMovieList = resultList,
+                                        popularMovieListPage = 1,
+                                        isLoading = false
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+        }
+    }
+}
