@@ -29,6 +29,7 @@ import com.example.movieapp.ui.details.DetailsView
 import com.example.movieapp.ui.favorites.FavoritesView
 import com.example.movieapp.ui.favorites.FavoritesViewModel
 import com.example.movieapp.data.utils.Screen
+import com.example.movieapp.ui.home.HomeView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.getValue
 import kotlin.jvm.java

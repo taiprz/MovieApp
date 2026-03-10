@@ -26,8 +26,12 @@ class MovieListPagingSource @Inject constructor(
             val response = api.getMoviesList(Category.POPULAR, page)
             val movieDTO = response.results
 
-            val prevKey = if (page > 0) page -1 else null
-            val nextKey = response.totalPages?.let { if (it < page) page+1 else null }
+
+//            val nextKey = if (page < (response.totalPages ?: 0)) page + 1 else null
+
+            val prevKey = if (page > 1) page -1 else null
+
+            val nextKey = response.totalPages?.let { if (it > page) page+1 else null }
 
             LoadResult.Page(
                 data = movieDTO?.map { it!!.toMovie(Category.POPULAR) } ?: emptyList(),

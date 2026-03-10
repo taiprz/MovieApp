@@ -1,17 +1,18 @@
 package com.example.movieapp.DTOs
 
 
+import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class MovieListDTO(
-    @SerialName("page")
+    @SerializedName("page")
     val page: Int? = null,
-    @SerialName("results")
+    @SerializedName("results")
     val results: List<MovieDTO?>? = null,
-    @SerialName("total_pages")
+    @SerializedName("total_pages")
     val totalPages: Int? = null,
-    @SerialName("total_results")
+    @SerializedName("total_results")
     val totalResults: Int? = null
 )
