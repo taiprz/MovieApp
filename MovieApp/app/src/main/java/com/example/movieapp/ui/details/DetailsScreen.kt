@@ -35,6 +35,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -91,7 +92,7 @@ fun MovieDetails(
             .background(color = Parchment)
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(15.dp)
+        verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
 
         Box(
@@ -106,19 +107,24 @@ fun MovieDetails(
         }
 
         Spacer(
-            modifier = Modifier.width(10.dp)
+            modifier = Modifier.width(5.dp)
         )
 
         Text(
             text = movie.title,
+            fontWeight = FontWeight.Bold,
             style = MaterialTheme.typography.headlineLarge,
             color = Color.Black,
             textAlign = TextAlign.Center,
             maxLines = 2
         )
 
+        Text(
+            movie.overview,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth(),
+            )
 
-        Text1(movie.overview, modifier = Modifier.fillMaxWidth())
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center,
@@ -134,6 +140,7 @@ fun MovieDetails(
             Spacer(
                 modifier = Modifier.width(4.dp)
             )
+
             Text1(movie.releaseDate)
 
             Spacer(
@@ -205,11 +212,6 @@ fun BackButton(navController: NavController) {
 }
 
 @Composable
-fun ErrorScreen() {
-
-}
-
-@Composable
 fun FavoriteButton(
     dialogTitle: String?,
     dialogText: String,
@@ -218,7 +220,8 @@ fun FavoriteButton(
     isFavorite: State<Boolean>
 ) {
     Row(
-        modifier = Modifier.padding(20.dp)
+        modifier = Modifier.padding(20.dp),
+        horizontalArrangement = Arrangement.Center
     ) {
         var showDialog by remember { mutableStateOf(false) }
 
@@ -235,7 +238,8 @@ fun FavoriteButton(
             }
 
             if (showDialog) {
-                AlertDialog(icon = {
+                AlertDialog(
+                    icon = {
                     Icon(
                         painter = painterResource(R.drawable.ic_heart),
                         contentDescription = stringResource(id = R.string.like),
@@ -258,7 +262,9 @@ fun FavoriteButton(
                             showDialog = false
                             onConfirmation()
                         }) {
-                        Text("Confirm")
+                        Text(text = "Confirm",
+                            color = Color.Black
+                            )
                     }
                 }, dismissButton = {
                     TextButton(
@@ -266,7 +272,8 @@ fun FavoriteButton(
                             showDialog = false
                             onDismissRequest()
                         }) {
-                        Text("Dismiss")
+                        Text(text = "Dismiss",
+                            color = Color.Black)
                     }
                 })
             }

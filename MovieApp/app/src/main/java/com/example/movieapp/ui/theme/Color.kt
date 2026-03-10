@@ -17,9 +17,9 @@ val Celadon = Color(180,206,179)
 
 val DustGrey = Color(219,211,201)
 
-val PetalFrost = Color(250,212,216)
+val PetalFrost = Color(208, 170, 122, 255)
 
 val Parchment = Color(239, 235, 231)
 
-val Lavanda = Color(0xFF9588AD)
+
 

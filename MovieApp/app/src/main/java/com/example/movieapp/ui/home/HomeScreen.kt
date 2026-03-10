@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -44,6 +45,7 @@ fun HomeView(
             .background(color = Parchment)
             .padding(16.dp)
     ) {
+
         SearchBar(
             searchText = searchText,
             onSearchTextChange = {
@@ -73,6 +75,7 @@ fun SearchBar(
         modifier = Modifier.fillMaxWidth(),
         placeholder = { Text("Search movies...") },
         singleLine = true,
+        shape = RoundedCornerShape(12.dp),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
         colors = TextFieldDefaults.colors(
             focusedContainerColor = PetalFrost,

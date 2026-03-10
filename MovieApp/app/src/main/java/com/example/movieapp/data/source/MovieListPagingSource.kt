@@ -27,7 +27,7 @@ class MovieListPagingSource @Inject constructor(
             val nextKey = response.totalPages?.let { if (it > page) page+1 else null }
 
             LoadResult.Page(
-                data = movieDTO?.map { it!!.toMovie(Category.POPULAR) } ?: emptyList(),
+                data = movieDTO?.mapNotNull { it?.toMovie(Category.POPULAR) } ?: emptyList(),
                 prevKey = prevKey,
                 nextKey = nextKey)
 
