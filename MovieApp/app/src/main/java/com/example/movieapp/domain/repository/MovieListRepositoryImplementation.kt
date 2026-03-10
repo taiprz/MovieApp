@@ -5,8 +5,9 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.example.movieapp.DAO.MovieDAO
 import com.example.movieapp.data.source.MovieListPagingSource
+import com.example.movieapp.data.source.MovieSearchPagingSource
 import com.example.movieapp.domain.model.Movie
-import com.example.movieapp.services.MovieAPI
+import com.example.movieapp.data.services.MovieAPI
 import com.example.movieapp.data.utils.MovieDB
 import com.example.movieapp.data.utils.Resource
 import com.example.movieapp.data.utils.toMovie
@@ -56,29 +57,31 @@ class MovieListRepositoryImplementation @Inject constructor(
         }
     }
 
+
+
     override suspend fun searchMovieByTitle(
         title: String,
         category: String
     ):
             Flow<Resource<List<Movie>>> {
         return flow {
-
-            val moviesFromApi = try {
-                movieAPI.searchByTitle(title)
-            } catch (e: IOException) {
-                e.printStackTrace()
-                emit(Resource.Error(message = "Error: ${e.localizedMessage}"))
-                return@flow
-            }
-            val movies = movieAPI.searchByTitle(title).results?.mapNotNull { movieDTO ->
-                movieDTO?.toMovieEntity(category)
-            } ?: emptyList()
-
-            emit(
-                Resource.Success(
-                movies.map { it.toMovie(category) }
-            ))
-            emit(Resource.Loading(false))
+//
+//            try {
+//                movieAPI.searchByTitle(title)
+//            } catch (e: IOException) {
+//                e.printStackTrace()
+//                emit(Resource.Error(message = "Error: ${e.localizedMessage}"))
+//                return@flow
+//            }
+//            val movies = movieAPI.searchByTitle(title).results?.mapNotNull { movieDTO ->
+//                movieDTO?.toMovieEntity(category)
+//            } ?: emptyList()
+//
+//            emit(
+//                Resource.Success(
+//                movies.map { it.toMovie(category) }
+//            ))
+//            emit(Resource.Loading(false))
         }
     }
 
@@ -91,10 +94,20 @@ class MovieListRepositoryImplementation @Inject constructor(
     }
 
     override  fun getAllMovies(): Flow<PagingData<Movie>> {
-       return Pager(config = PagingConfig(pageSize = MAX_ITEMS,
+       return Pager(config = PagingConfig(
+           pageSize = MAX_ITEMS,
            prefetchDistance = PREFETCH_ITEMS),
            pagingSourceFactory = { MovieListPagingSource(movieAPI)
        }).flow
+    }
+
+    override fun searchMoviesPaged(
+        query: String,
+    ): Flow<PagingData<Movie>> {
+        return Pager(
+            config = PagingConfig(pageSize = 20),
+            pagingSourceFactory = { MovieSearchPagingSource(movieAPI, query) }
+        ).flow
     }
 
     companion object {

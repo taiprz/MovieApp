@@ -1,7 +1,7 @@
 package com.example.movieapp.domain.use_cases
 
 import com.example.movieapp.domain.model.Movie
-import com.example.movieapp.services.MovieAPI
+import com.example.movieapp.data.services.MovieAPI
 import javax.inject.Inject
 
 class PosterUseCase @Inject constructor() {

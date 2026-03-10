@@ -1,5 +1,6 @@
 package com.example.movieapp.data.source
 
+import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.example.movieapp.data.utils.Category
@@ -9,11 +10,12 @@ import com.example.movieapp.data.services.MovieAPI
 import okio.IOException
 import javax.inject.Inject
 
-class MovieListPagingSource @Inject constructor(
-    private val api: MovieAPI
+class MovieSearchPagingSource @Inject constructor(
+    private val api: MovieAPI,
+    private val query: String
 ): PagingSource<Int, Movie>() {
 
-    override fun getRefreshKey(state : PagingState<Int, Movie>): Int? {
+    override fun getRefreshKey(state: PagingState<Int, Movie>): Int? {
         return state.anchorPosition
     }
 
@@ -21,17 +23,18 @@ class MovieListPagingSource @Inject constructor(
         return try {
 
             val page = params.key ?: 1
-            val response = api.getMoviesList(Category.POPULAR, page)
+            val response = api.searchByTitle(query, page)
             val movieDTO = response.results
-            val prevKey = if (page > 1) page -1 else null
-            val nextKey = response.totalPages?.let { if (it > page) page+1 else null }
+
+            val prevKey = if (page > 1) page - 1 else null
+            val nextKey = response.totalPages?.let { if (it > page) page + 1 else null }
 
             LoadResult.Page(
-                data = movieDTO?.map { it!!.toMovie(Category.POPULAR) } ?: emptyList(),
+                data = movieDTO?.mapNotNull { it?.toMovie(Category.POPULAR) } ?: emptyList(),
                 prevKey = prevKey,
-                nextKey = nextKey)
-
-        } catch (e : IOException) {
+                nextKey = nextKey
+            )
+        } catch (e: IOException) {
             LoadResult.Error(e)
         }
     }

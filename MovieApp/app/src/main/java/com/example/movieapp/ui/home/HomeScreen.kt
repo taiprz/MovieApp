@@ -16,6 +16,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -32,9 +33,10 @@ fun HomeView(
     homeViewModel: HomeViewModel = hiltViewModel(),
     navController: NavHostController
 ) {
-
-//    val movieState by homeViewModel.movieListState.collectAsState()
     val movies = homeViewModel.movies.collectAsLazyPagingItems()
+    val moviesFound = homeViewModel.moviesFound.collectAsLazyPagingItems()
+
+    var searchText by rememberSaveable { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -42,39 +44,32 @@ fun HomeView(
             .background(color = Parchment)
             .padding(16.dp)
     ) {
-
-        SearchBar(homeViewModel)
+        SearchBar(
+            searchText = searchText,
+            onSearchTextChange = {
+                searchText = it
+                homeViewModel.onEvent(MovieListEvents.Search(it))
+            }
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
-//
-//        MovieList(
-//            movies = movieState.popularMovieList,
-//            navController = navController,
-//            homeViewModel = homeViewModel
-//        )
-//        MoviesList(movies,  navController = navController, homeViewModel = homeViewModel)
 
-
-        MoviesList(movies,  navController = navController, homeViewModel = homeViewModel)
+        if (searchText.isEmpty()) {
+            MovieList(movies = movies, navController = navController, homeViewModel = homeViewModel)
+        } else {
+            MovieList(movies = moviesFound, navController = navController, homeViewModel = homeViewModel)
+        }
     }
 }
 
-
 @Composable
-fun SearchBar(homeViewModel: HomeViewModel) {
-
-    var text by rememberSaveable { mutableStateOf("") }
-
+fun SearchBar(
+    searchText: String,
+    onSearchTextChange: (String) -> Unit
+) {
     TextField(
-        value = text,
-        onValueChange = { newText ->
-            text = newText
-            if (newText.isEmpty()) {
-                homeViewModel.onEvent(MovieListEvents.Paginate(Category.POPULAR))
-            } else {
-                homeViewModel.onEvent(MovieListEvents.Search(newText))
-            }
-        },
+        value = searchText,
+        onValueChange = { onSearchTextChange(it) },
         modifier = Modifier.fillMaxWidth(),
         placeholder = { Text("Search movies...") },
         singleLine = true,
@@ -88,39 +83,8 @@ fun SearchBar(homeViewModel: HomeViewModel) {
     )
 }
 
-//@Composable
-//fun MovieList(
-//    movies: List<Movie>,
-//    navController: NavHostController,
-//    homeViewModel: HomeViewModel
-//) {
-
-//    val listState = rememberLazyListState()
-//
-//    LazyColumn(
-//        state = listState,
-//        verticalArrangement = Arrangement.spacedBy(8.dp),
-//        modifier = Modifier.fillMaxSize()
-//    ) {
-//        items(movies) { movie ->
-//            MovieItem(
-//                movie = movie, navHostController = navController, homeViewModel = homeViewModel
-//            )
-//        }
-//    }
-//
-//    LaunchedEffect(listState, movies) {
-//        snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
-//            .collect { index ->
-//                if (index != null && index >= movies.lastIndex - 1) {
-//                    homeViewModel.onEvent(MovieListEvents.Paginate(Category.POPULAR))
-//                }
-//            }
-//    }
-//}
-
 @Composable
-fun MoviesList(
+fun MovieList(
     movies: LazyPagingItems<Movie>,
     navController: NavHostController,
     homeViewModel: HomeViewModel
@@ -130,18 +94,19 @@ fun MoviesList(
     ) {
         items(movies.itemCount) { index ->
             movies[index]?.let { movie ->
-                ItemList(
+                MovieItem(
                     movie = movie,
                     navHostController = navController,
                     homeViewModel = homeViewModel
                 )
             }
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
 
 @Composable
-fun ItemList(movie: Movie,
+fun MovieItem(movie: Movie,
              navHostController: NavHostController,
              homeViewModel: HomeViewModel) {
     Row(modifier = Modifier
@@ -174,41 +139,6 @@ fun ItemList(movie: Movie,
     }
 }
 
-//@Composable
-//fun MovieItem(
-//    movie: Movie,
-//    navHostController: NavHostController,
-//    homeViewModel: HomeViewModel
-//) {
-//    Row(modifier = Modifier
-//        .fillMaxWidth()
-//        .background(color = DustGrey)
-//        .clickable {
-//            navHostController.navigate("${Screen.Details.route}/${movie.id}")
-//        }
-//        .padding(8.dp)) {
-//
-//        AsyncImage(
-//            model = homeViewModel.loadPoster(movie) ,
-//            contentDescription = "Movie poster",
-//            modifier = Modifier.size(80.dp)
-//        )
-//
-//        Spacer(modifier = Modifier.width(8.dp))
-//
-//        Column(modifier = Modifier.weight(1f)) {
-//            Text(
-//                text = movie.title, style = MaterialTheme.typography.titleMedium
-//            )
-//            Text(
-//                text = movie.overview,
-//                maxLines = 2,
-//                overflow = TextOverflow.Ellipsis,
-//                style = MaterialTheme.typography.bodyMedium
-//            )
-//        }
-//    }
-//}
 
 
 

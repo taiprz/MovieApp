@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -7,6 +9,7 @@ plugins {
 }
 
 android {
+
     namespace = "com.example.movieapp"
     compileSdk = 36
 
@@ -16,12 +19,22 @@ android {
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
+        val keystoreFile = project.rootProject.file("apikey.properties")
+        val properties = Properties()
+        properties.load(keystoreFile.inputStream())
+        val apiKey = properties.getProperty("API_KEY") ?: ""
 
+        buildConfigField(
+            type = "String",
+            name = "API_KEY",
+            value = apiKey
+        )
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     compileOptions {

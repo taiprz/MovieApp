@@ -45,6 +45,8 @@ import coil.compose.AsyncImage
 import com.example.movieapp.R
 import com.example.movieapp.domain.model.Movie
 import com.example.movieapp.domain.use_cases.PosterUseCase
+import com.example.movieapp.ui.theme.Parchment
+import com.example.movieapp.ui.theme.PetalFrost
 
 @Composable
 fun DetailsView(
@@ -86,7 +88,7 @@ fun MovieDetails(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(232, 223, 212))
+            .background(color = Parchment)
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(15.dp)
@@ -228,7 +230,7 @@ fun FavoriteButton(
                 Icon(
                     painter = painterResource(R.drawable.ic_heart),
                     contentDescription = stringResource(id = R.string.like),
-                    tint = Color.Red
+                    tint = PetalFrost
                 )
             }
 

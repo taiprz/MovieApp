@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.NavigationBar
@@ -30,6 +31,8 @@ import com.example.movieapp.ui.favorites.FavoritesView
 import com.example.movieapp.ui.favorites.FavoritesViewModel
 import com.example.movieapp.data.utils.Screen
 import com.example.movieapp.ui.home.HomeView
+import com.example.movieapp.ui.theme.Parchment
+import com.example.movieapp.ui.theme.PetalFrost
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.getValue
 import kotlin.jvm.java
@@ -103,7 +106,9 @@ class MainActivity : ComponentActivity() {
                 NavHost(
                     navController = navController,
                     startDestination = Screen.Home.route,
-                    modifier = Modifier.padding(padding)
+                    modifier = Modifier
+                        .padding(padding)
+
                 ) {
                     composable(Screen.Home.route) {
                         val homeViewModel: HomeViewModel = hiltViewModel()

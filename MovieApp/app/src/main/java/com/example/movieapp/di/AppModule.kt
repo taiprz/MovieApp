@@ -3,7 +3,7 @@ package com.example.movieapp.di
 import android.app.Application
 import androidx.room.Room
 import com.example.movieapp.DAO.MovieDAO
-import com.example.movieapp.services.MovieAPI
+import com.example.movieapp.data.services.MovieAPI
 import com.example.movieapp.data.utils.MovieDB
 import dagger.Module
 import dagger.Provides

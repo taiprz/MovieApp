@@ -2,7 +2,7 @@ package com.example.movieapp.domain.repository
 
 import com.example.movieapp.DAO.MovieDAO
 import com.example.movieapp.domain.model.Movie
-import com.example.movieapp.services.MovieAPI
+import com.example.movieapp.data.services.MovieAPI
 import com.example.movieapp.data.utils.Resource
 import com.example.movieapp.data.utils.toMovie
 import com.example.movieapp.data.utils.toMovieEntity
