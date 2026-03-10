@@ -58,47 +58,46 @@ class HomeViewModel @Inject constructor(
                 _searchText.update { event.query }
             }
 
-            else -> {}
         }
     }
 
 
     private fun getPopularMoviesList() {
 
-        viewModelScope.launch {
-            _movieListState.update {
-                it.copy(isLoading = true)
-            }
-
-            movieListRepository.getMovieList(
-                Category.POPULAR, movieListState.value.popularMovieListPage
-            ).collectLatest { result ->
-                when (result) {
-                    is Resource.Error -> {
-                        _movieListState.update {
-                            it.copy(isLoading = false)
-                        }
-                    }
-
-                    is Resource.Loading -> {
-                        _movieListState.update {
-                            it.copy(isLoading = result.isLoading)
-                        }
-                    }
-
-                    is Resource.Success -> {
-                        result.data?.let { popularList ->
-                            _movieListState.update {
-                                it.copy(
-                                    popularMovieList = movieListState.value.popularMovieList + popularList.shuffled(),
-                                    popularMovieListPage = movieListState.value.popularMovieListPage + 1
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-        }
+//        viewModelScope.launch {
+//            _movieListState.update {
+//                it.copy(isLoading = true)
+//            }
+//
+//            movieListRepository.getMovieList(
+//                Category.POPULAR, movieListState.value.popularMovieListPage
+//            ).collectLatest { result ->
+//                when (result) {
+//                    is Resource.Error -> {
+//                        _movieListState.update {
+//                            it.copy(isLoading = false)
+//                        }
+//                    }
+//
+//                    is Resource.Loading -> {
+//                        _movieListState.update {
+//                            it.copy(isLoading = result.isLoading)
+//                        }
+//                    }
+//
+//                    is Resource.Success -> {
+//                        result.data?.let { popularList ->
+//                            _movieListState.update {
+//                                it.copy(
+//                                    popularMovieList = movieListState.value.popularMovieList + popularList.shuffled(),
+//                                    popularMovieListPage = movieListState.value.popularMovieListPage + 1
+//                                )
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
     }
 
     fun loadPoster(movie: Movie): String {
@@ -117,35 +116,35 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun resultsFromSearchList(title: String) {
-        viewModelScope.launch {
-            _movieListState.update { it.copy(isLoading = true) }
-
-
-            movieListRepository.searchMovieByTitle(title, category = Category.POPULAR)
-                .collectLatest { result ->
-                    when (result) {
-                        is Resource.Error -> {
-                            _movieListState.update { it.copy(isLoading = false) }
-                        }
-
-                        is Resource.Loading -> {
-                            _movieListState.update { it.copy(isLoading = result.isLoading) }
-                        }
-
-                        is Resource.Success -> {
-                            result.data?.let { resultList ->
-                                _movieListState.update {
-                                    it.copy(
-                                        popularMovieList = resultList,
-                                        popularMovieListPage = 1,
-                                        isLoading = false
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-        }
+//        viewModelScope.launch {
+//            _movieListState.update { it.copy(isLoading = true) }
+//
+//
+//            movieListRepository.searchMovieByTitle(title, category = Category.POPULAR)
+//                .collectLatest { result ->
+//                    when (result) {
+//                        is Resource.Error -> {
+//                            _movieListState.update { it.copy(isLoading = false) }
+//                        }
+//
+//                        is Resource.Loading -> {
+//                            _movieListState.update { it.copy(isLoading = result.isLoading) }
+//                        }
+//
+//                        is Resource.Success -> {
+//                            result.data?.let { resultList ->
+//                                _movieListState.update {
+//                                    it.copy(
+//                                        popularMovieList = resultList,
+//                                        popularMovieListPage = 1,
+//                                        isLoading = false
+//                                    )
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//        }
     }
 
          private fun pagedResultsFromSearch(title: String) {

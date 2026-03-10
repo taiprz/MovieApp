@@ -344,59 +344,59 @@ private fun Text1(
     )
 }
 
-@Composable
-fun details(movie: Movie) {
-    Row(
-        modifier = Modifier.background(Color.White), horizontalArrangement = Arrangement.Center
-    ) {
-        Box(
-            modifier = Modifier.size(24.dp),
-        ) {
-            AsyncImage(
-                modifier = Modifier,
-                model = R.drawable.ic_calendar,
-                contentDescription = "Calendar icon",
-                contentScale = ContentScale.Fit
-            )
-        }
-        Text1(movie.releaseDate)
-        Text("|")
-        Box(
-            modifier = Modifier
-                .padding(0.dp)
-                .size(24.dp)
-        ) {
-            AsyncImage(
-                modifier = Modifier,
-                model = R.drawable.ic_star,
-                contentDescription = "Star icon",
-                contentScale = ContentScale.Fit
-            )
-        }
-        Text1(movie.voteAverage.toString())
-    }
-}
+//@Composable
+//fun details(movie: Movie) {
+//    Row(
+//        modifier = Modifier.background(Color.White), horizontalArrangement = Arrangement.Center
+//    ) {
+//        Box(
+//            modifier = Modifier.size(24.dp),
+//        ) {
+//            AsyncImage(
+//                modifier = Modifier,
+//                model = R.drawable.ic_calendar,
+//                contentDescription = "Calendar icon",
+//                contentScale = ContentScale.Fit
+//            )
+//        }
+//        Text1(movie.releaseDate)
+//        Text("|")
+//        Box(
+//            modifier = Modifier
+//                .padding(0.dp)
+//                .size(24.dp)
+//        ) {
+//            AsyncImage(
+//                modifier = Modifier,
+//                model = R.drawable.ic_star,
+//                contentDescription = "Star icon",
+//                contentScale = ContentScale.Fit
+//            )
+//        }
+//        Text1(movie.voteAverage.toString())
+//    }
+//}
 
 @Preview(showBackground = true)
 @Composable
-fun Vista() {
-    details(
-        movie = Movie(
-            id = 2,
-            title = "Preview Movie",
-            overview = " This is just preview data. This is just preview data. This is just preview data. This is just preview data. This is just preview data. This is just preview data. This is just preview data. This is just preview data. This is just preview data. This is just preview data.",
-            adult = false,
-            backdropPath = "/qhyyyWrHUbl6QG4udAJj17CBa5.jpg",
-            originalLanguage = "en",
-            originalTitle = "Preview Movie",
-            popularity = 0.0,
-            posterPath = "/qhyyyWrHUbl6QG4udAJj17CBa5.jpg",
-            releaseDate = "2024-01-01",
-            voteAverage = 5.365,
-            voteCount = 100,
-            video = false,
-            category = "POPULAR",
-            genreIds = listOf("Action, Suspense")
-        )
-    )
+fun Prvw() {
+//    details(
+//        movie = Movie(
+//            id = 2,
+//            title = "Preview Movie",
+//            overview = " This is just preview data. This is just preview data. This is just preview data. This is just preview data. This is just preview data. This is just preview data. This is just preview data. This is just preview data. This is just preview data. This is just preview data.",
+//            adult = false,
+//            backdropPath = "/qhyyyWrHUbl6QG4udAJj17CBa5.jpg",
+//            originalLanguage = "en",
+//            originalTitle = "Preview Movie",
+//            popularity = 0.0,
+//            posterPath = "/qhyyyWrHUbl6QG4udAJj17CBa5.jpg",
+//            releaseDate = "2024-01-01",
+//            voteAverage = 5.365,
+//            voteCount = 100,
+//            video = false,
+//            category = "POPULAR",
+//            genreIds = listOf("Action, Suspense")
+//        )
+//    )
 }
