@@ -13,6 +13,8 @@ class MovieListPagingSource @Inject constructor(
     private val api: MovieAPI
 ): PagingSource<Int, Movie>() {
 
+    // TODO: BLEND BOTH PAGING IN JUST ONE
+
     override fun getRefreshKey(state : PagingState<Int, Movie>): Int? {
         return state.anchorPosition
     }

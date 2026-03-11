@@ -17,14 +17,12 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ShapeDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -35,23 +33,21 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
-import coil.size.Size
 import com.example.movieapp.R
 import com.example.movieapp.domain.model.Movie
-import com.example.movieapp.data.utils.Screen
-import com.example.movieapp.ui.home.MovieListState
+import com.example.movieapp.data.utils.Route
 import com.example.movieapp.ui.theme.Parchment
 import com.example.movieapp.ui.theme.PetalFrost
 
@@ -61,7 +57,7 @@ fun FavoritesView(
     favoritesViewModel: FavoritesViewModel,
     navController: NavHostController
 ) {
-    val movieState by favoritesViewModel.movieListState.collectAsState()
+    val movieState by favoritesViewModel.movieListState.collectAsStateWithLifecycle()
     var editMode by remember { mutableStateOf(false) }
 
     if (editMode) {
@@ -105,6 +101,8 @@ fun FavoritesView(
     }
 }
 
+
+// TODO: SWITCH TO SCAFFOLD TOP BAR
 @Composable
 fun Header(
     movies: List<Movie>,
@@ -117,7 +115,7 @@ fun Header(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            "Your Favorites",
+            stringResource(R.string.your_favorites),
             style = MaterialTheme.typography.headlineLarge,
             modifier = Modifier.weight(1f),
             textAlign = TextAlign.Center,
@@ -135,7 +133,7 @@ fun EditButton(
     editMode: Boolean
 ) {
 
-    Box() {
+    Box {
         IconButton(
             onClick = onEditClick,
             shape = CircleShape,
@@ -148,7 +146,7 @@ fun EditButton(
         ) {
             Icon(
                 painter = painterResource(R.drawable.ic_edit),
-                contentDescription = "Edit button",
+                contentDescription = stringResource(R.string.edit_button),
                 modifier = Modifier.size(20.dp),
                 tint = if (editMode) Parchment else Color.Black
             )
@@ -171,9 +169,9 @@ fun FavMovieList(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        items(movies) { movie ->
+        items(movies) {
             MovieItem(
-                movie = movie,
+                movie = it,
                 navController,
                 editMode,
                 favoritesViewModel = favoritesViewModel
@@ -200,11 +198,11 @@ fun EmptyListView(navController: NavController) {
                 modifier = Modifier
                     .size(120.dp),
                 model = R.drawable.ic_sad,
-                contentDescription = "sad face"
+                contentDescription = stringResource(R.string.empty_list_screen)
             )
 
             Text(
-                text = "No movies saved yet",
+                text = stringResource(R.string.no_movies_saved_yet),
                 fontWeight = FontWeight.Bold,
             )
 
@@ -219,13 +217,13 @@ fun EmptyListView(navController: NavController) {
                 onClick = {
                     navController.popBackStack()
                 },
-            ) {
-                Text("Discover movies")
+            )
+            {
+                Text(stringResource(R.string.discover_movies))
             }
         }
     }
 }
-
 
 @Composable
 fun MovieItem(
@@ -235,11 +233,12 @@ fun MovieItem(
     favoritesViewModel: FavoritesViewModel
 ) {
 
+    // TODO: SWITCH TO CARD AND CHANGE HOW ROUTE IS PASSED
     Column(
         modifier = Modifier
             .padding(4.dp)
             .clickable {
-                navHostController.navigate("${Screen.Details.route}/${movie.id}")
+                navHostController.navigate("${Route.Details.route}/${movie.id}")
             },
         horizontalAlignment = Alignment.CenterHorizontally
     )
@@ -262,9 +261,9 @@ fun MovieItem(
                         favoritesViewModel.removeFavorite(movie)
                     },
                 ) {
-                    AsyncImage(
-                        model = R.drawable.ic_remove,
-                        contentDescription = "Delete"
+                    Icon(
+                        painter = painterResource(R.drawable.ic_remove),
+                        contentDescription = stringResource(R.string.remove_from_favorites_button)
                     )
                 }
             }
@@ -286,7 +285,7 @@ fun MovieItem(
 fun EditMode(
     favoritesViewModel: FavoritesViewModel
 ) {
-    val movieState by favoritesViewModel.movieListState.collectAsState()
+//    val movieState by favoritesViewModel.movieListState.collectAsState()
 }
 
 @Composable

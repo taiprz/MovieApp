@@ -19,71 +19,12 @@ import okio.IOException
 import javax.inject.Inject
 
 
+// TODO: CONVERT NOT SUSPEND FUNCTIONS TO SUSPEND WHEN NEEDED
 class MovieListRepositoryImplementation @Inject constructor(
     private val movieAPI : MovieAPI,
-    private val movieDatabase : MovieDB,
     private val movieDao : MovieDAO
 ) : MovieListRepository {
-    // here, we return a flow
 
-
-    override suspend fun getMovieList(
-        category: String,
-        page: Int
-    ): Flow<Resource<List<Movie>>> {
-        return flow {
-
-            emit(Resource.Loading(true))
-
-            // exceptions
-            val movieListFromApi = try {
-                movieAPI.getMoviesList(category, page)
-            } catch (e: IOException) {
-                e.printStackTrace()
-                emit(Resource.Error(message = "Error loading movies."))
-                return@flow
-            }
-
-            val movieEntities = movieListFromApi.results?.mapNotNull { movieDTO ->
-                movieDTO?.toMovieEntity(category)
-            } ?: emptyList()
-
-
-            emit(
-                Resource.Success(
-                movieEntities.map { it.toMovie(category) }
-            ))
-            emit(Resource.Loading(false))
-        }
-    }
-
-
-
-    override suspend fun searchMovieByTitle(
-        title: String,
-        category: String
-    ):
-            Flow<Resource<List<Movie>>> {
-        return flow {
-//
-//            try {
-//                movieAPI.searchByTitle(title)
-//            } catch (e: IOException) {
-//                e.printStackTrace()
-//                emit(Resource.Error(message = "Error: ${e.localizedMessage}"))
-//                return@flow
-//            }
-//            val movies = movieAPI.searchByTitle(title).results?.mapNotNull { movieDTO ->
-//                movieDTO?.toMovieEntity(category)
-//            } ?: emptyList()
-//
-//            emit(
-//                Resource.Success(
-//                movies.map { it.toMovie(category) }
-//            ))
-//            emit(Resource.Loading(false))
-        }
-    }
 
 
     override suspend fun getFavorites(): Flow<List<Movie>> {
@@ -97,8 +38,8 @@ class MovieListRepositoryImplementation @Inject constructor(
        return Pager(config = PagingConfig(
            pageSize = MAX_ITEMS,
            prefetchDistance = PREFETCH_ITEMS),
-           pagingSourceFactory = { MovieListPagingSource(movieAPI)
-       }).flow
+           pagingSourceFactory = { MovieListPagingSource(movieAPI) }
+       ).flow
     }
 
     override fun searchMoviesPaged(
@@ -110,7 +51,7 @@ class MovieListRepositoryImplementation @Inject constructor(
         ).flow
     }
 
-    companion object {
+    private companion object {
         const val MAX_ITEMS = 10
         const val PREFETCH_ITEMS = 3
     }

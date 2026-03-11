@@ -4,8 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
@@ -17,14 +15,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import com.example.movieapp.domain.model.Movie
-import com.example.movieapp.data.utils.Screen
-import com.example.movieapp.data.utils.Category
+import com.example.movieapp.data.utils.Route
 import com.example.movieapp.ui.theme.DustGrey
 import com.example.movieapp.ui.theme.Parchment
 import com.example.movieapp.ui.theme.PetalFrost
@@ -116,7 +112,7 @@ fun MovieItem(movie: Movie,
         .fillMaxWidth()
         .background(color = DustGrey)
         .clickable {
-            navHostController.navigate("${Screen.Details.route}/${movie.id}")
+            navHostController.navigate("${Route.Details.route}/${movie.id}")
         }
         .padding(8.dp)) {
 

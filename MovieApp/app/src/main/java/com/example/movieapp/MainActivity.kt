@@ -5,7 +5,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.NavigationBar
@@ -29,10 +28,8 @@ import com.example.movieapp.ui.splashcreen.SplashScreenViewModel
 import com.example.movieapp.ui.details.DetailsView
 import com.example.movieapp.ui.favorites.FavoritesView
 import com.example.movieapp.ui.favorites.FavoritesViewModel
-import com.example.movieapp.data.utils.Screen
+import com.example.movieapp.data.utils.Route
 import com.example.movieapp.ui.home.HomeView
-import com.example.movieapp.ui.theme.Parchment
-import com.example.movieapp.ui.theme.PetalFrost
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.getValue
 import kotlin.jvm.java
@@ -67,8 +64,8 @@ class MainActivity : ComponentActivity() {
             Scaffold(
                 bottomBar = {
                     NavigationBar {
-                        val screens = listOf(Screen.Home, Screen.Favorites)
-                        screens.forEach { screen ->
+                        val routes = listOf(Route.Home, Route.Favorites)
+                        routes.forEach { screen ->
                             NavigationBarItem(
                                 selected = navController.currentDestination?.route == screen.route,
                                 onClick = {
@@ -79,7 +76,7 @@ class MainActivity : ComponentActivity() {
                                 },
                                 icon = {
                                     when(screen) {
-                                        Screen.Home ->
+                                        Route.Home ->
                                             AsyncImage(
                                                 modifier = Modifier
                                                     .size(20.dp),
@@ -87,7 +84,7 @@ class MainActivity : ComponentActivity() {
                                             contentDescription = "Home"
                                         )
 
-                                        Screen.Favorites ->
+                                        Route.Favorites ->
                                             AsyncImage(
                                                 modifier = Modifier
                                                     .size(20.dp),
@@ -105,12 +102,12 @@ class MainActivity : ComponentActivity() {
             ) { padding ->
                 NavHost(
                     navController = navController,
-                    startDestination = Screen.Home.route,
+                    startDestination = Route.Home.route,
                     modifier = Modifier
                         .padding(padding)
 
                 ) {
-                    composable(Screen.Home.route) {
+                    composable(Route.Home.route) {
                         val homeViewModel: HomeViewModel = hiltViewModel()
                         HomeView(
                             homeViewModel = homeViewModel,
@@ -118,7 +115,7 @@ class MainActivity : ComponentActivity() {
                         )
                     }
 
-                    composable(Screen.Favorites.route) {
+                    composable(Route.Favorites.route) {
                         val favoritesViewModel = hiltViewModel<FavoritesViewModel>()
                         FavoritesView(
                             favoritesViewModel = favoritesViewModel,
@@ -126,7 +123,7 @@ class MainActivity : ComponentActivity() {
                         )
                     }
 
-                    composable(Screen.Details.route + "/{movieId}",
+                    composable(Route.Details.route + "/{movieId}",
                         arguments = listOf(navArgument("movieId") { type = NavType.IntType })
                     ) { backStackEntry ->
                         val movieId = backStackEntry.arguments?.getInt("movieId") ?: 0

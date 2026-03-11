@@ -20,6 +20,7 @@ class DetailViewModel @Inject constructor(
     private val posterUseCase: PosterUseCase
 ) : ViewModel() {
 
+    // TODO: IMPLEMENT STATEHANDLE AND INIT 
     private val _detailState = MutableStateFlow(DetailState())
     val detailsState = _detailState.asStateFlow()
 

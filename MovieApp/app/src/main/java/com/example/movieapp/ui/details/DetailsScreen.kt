@@ -21,10 +21,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,14 +40,16 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.movieapp.R
 import com.example.movieapp.domain.model.Movie
-import com.example.movieapp.domain.use_cases.PosterUseCase
 import com.example.movieapp.ui.theme.Parchment
 import com.example.movieapp.ui.theme.PetalFrost
 
+// TODO: REIMPLEMENT/REDESIGN SO INSTEAD OF PASSING COMPONENTS THROUGH PARAMETERS, BRING TO HIGHER LEVEL
+// TODO: ALSO IMPLEMENT MORE PREVIEWS
 @Composable
 fun DetailsView(
     detailsViewModel: DetailViewModel = hiltViewModel(),
@@ -59,67 +60,89 @@ fun DetailsView(
         detailsViewModel.getMovie(movieId)
     }
 
-    val detailState by detailsViewModel.detailsState.collectAsState()
+    val detailState by detailsViewModel.detailsState.collectAsStateWithLifecycle()
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState()),
         contentAlignment = Alignment.Center
-    ) {
+    )
+    {
 
         if (detailState.isLoading) {
-            CircularProgressIndicator(
-                modifier = Modifier
-                    .fillMaxSize()
-            )
+            CircularProgressIndicator()
         }
 
         detailState.movie?.let { movie ->
-            MovieDetails(movie, navController, detailsViewModel)
-        }
+
+            val isFavorite by detailsViewModel.isFavorite(movie.id).collectAsStateWithLifecycle(false)
+
+            MovieDetails(
+                movie = movie,
+                isFavorite = isFavorite,
+                poster = detailsViewModel.loadPoster(movie),
+                onBackClick = { navController.popBackStack() },
+                onAddFavorite = { detailsViewModel.addToFavorites(movie) },
+                onRemoveFavorite = { detailsViewModel.removeFavorite(movie)
+        })
     }
 }
+}
 
-@Composable
-fun MovieDetails(
-    movie: Movie,
-    navController: NavController,
-    detailsViewModel: DetailViewModel
-) {
-    val isFavorite = detailsViewModel.isFavorite(movie.id).collectAsState(false)
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = Parchment)
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(10.dp)
+    @Composable
+    fun MovieDetails(
+        movie: Movie,
+        isFavorite: Boolean,
+        poster: Any?,
+        onBackClick: () -> Unit,
+        onAddFavorite: () -> Unit,
+        onRemoveFavorite: () -> Unit
     ) {
 
-        Box(
-            modifier = Modifier.aspectRatio(2 / 3f)
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Parchment)
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            AsyncImage(
-                model = detailsViewModel.loadPoster(movie),
-                contentDescription = "Movie poster",
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.FillHeight
+
+            Box(modifier = Modifier.aspectRatio(2 / 3f)) {
+                AsyncImage(
+                    model = poster,
+                    contentDescription = movie.title,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.FillHeight
+                )
+            }
+
+            MovieInfo(movie)
+
+            ButtonsPanel(
+                isFavorite = isFavorite,
+                onBackClick = onBackClick,
+                onAddFavorite = onAddFavorite,
+                onRemoveFavorite = onRemoveFavorite
             )
         }
+    }
 
-        Spacer(
-            modifier = Modifier.width(5.dp)
-        )
 
+@Composable
+fun MovieInfo(movie: Movie) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally)
+    {
         Text(
             text = movie.title,
             fontWeight = FontWeight.Bold,
             style = MaterialTheme.typography.headlineLarge,
             color = Color.Black,
             textAlign = TextAlign.Center,
-            maxLines = 2
+            maxLines = 2,
+            modifier = Modifier
+                .padding(8.dp)
         )
 
         Text(
@@ -132,85 +155,69 @@ fun MovieDetails(
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Box(modifier = Modifier.size(24.dp)) {
-                AsyncImage(
-                    model = R.drawable.ic_calendar,
-                    contentDescription = "Calendar icon",
-                    contentScale = ContentScale.Fit
-                )
-            }
-            Spacer(
-                modifier = Modifier.width(4.dp)
+            horizontalArrangement = Arrangement.spacedBy(
+                8.dp,
+                Alignment.CenterHorizontally
+            )
+        )
+        {
+
+            Icon(
+                painterResource(R.drawable.ic_calendar),
+                stringResource(R.string.calendar_icon),
+                modifier = Modifier
+                    .size(16.dp)
             )
 
             Text1(movie.releaseDate)
 
-            Spacer(
-                modifier = Modifier.width(8.dp)
-            )
-            Text("|")
-            Spacer(
-                modifier = Modifier.width(8.dp)
+            VerticalDivider()
+
+            Icon(
+                painter = painterResource(R.drawable.ic_star),
+                contentDescription = stringResource(R.string.vote_average),
+                modifier = Modifier
+                    .size(16.dp)
             )
 
-            Box(
-                modifier = Modifier.size(24.dp)
-            ) {
-                AsyncImage(
-                    model = R.drawable.ic_star,
-                    contentDescription = "Star icon",
-                    contentScale = ContentScale.Fit
-                )
-            }
-            Spacer(
-                modifier = Modifier.width(4.dp)
-            )
             Text1(movie.voteAverage.toString())
-        }
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            BackButton(navController)
-
-            Spacer(modifier = Modifier.width(16.dp))
-            if (!isFavorite.value) {
-
-                FavoriteButton(
-                    dialogTitle = "Save movie",
-                    dialogText = "Add to favorites?",
-                    onDismissRequest = {},
-                    onConfirmation = { detailsViewModel.addToFavorites(movie) },
-                    isFavorite = isFavorite
-                )
-            } else {
-                FavoriteButton(
-                    dialogTitle = "Delete movie",
-                    dialogText = "Delete from favorites?",
-                    onDismissRequest = {},
-                    onConfirmation = { detailsViewModel.removeFavorite(movie) },
-                    isFavorite = isFavorite
-                )
-            }
         }
     }
 }
 
 @Composable
-fun BackButton(navController: NavController) {
-    IconButton(
-        onClick = {
-            navController.popBackStack()
-        },
+fun ButtonsPanel(
+    isFavorite: Boolean,
+    onBackClick: () -> Unit,
+    onAddFavorite: () -> Unit,
+    onRemoveFavorite: () -> Unit
+) {
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
     ) {
+
+        BackButton(onClick = onBackClick)
+
+        Spacer(modifier = Modifier.width(16.dp))
+
+        FavoriteButton(
+            isFavorite = isFavorite,
+            onAddFavorite = onAddFavorite,
+            onRemoveFavorite = onRemoveFavorite
+        )
+    }
+}
+
+@Composable
+fun BackButton(onClick: () -> Unit) {
+
+    IconButton(onClick = onClick) {
         Icon(
             painter = painterResource(R.drawable.ic_back),
-            contentDescription = "return",
+            contentDescription = stringResource(R.string.return_button),
             tint = Color.Black
         )
     }
@@ -218,89 +225,64 @@ fun BackButton(navController: NavController) {
 
 @Composable
 fun FavoriteButton(
-    dialogTitle: String?,
-    dialogText: String,
-    onDismissRequest: () -> Unit,
-    onConfirmation: () -> Unit,
-    isFavorite: State<Boolean>
+    isFavorite: Boolean,
+    onAddFavorite: () -> Unit,
+    onRemoveFavorite: () -> Unit
 ) {
 
     var showDialog by remember { mutableStateOf(false) }
-    val iconTint = if (isFavorite.value) PetalFrost else Color.Black
-    val dialogIconTint = if (isFavorite.value) Color.Black else Color.Red
 
-    Row(
-        modifier = Modifier.padding(20.dp),
-        horizontalArrangement = Arrangement.Center
-    ) {
+    val iconTint = if (isFavorite) PetalFrost else Color.Black
 
-        IconButton(onClick = { showDialog = true }) {
-            Icon(
-                painter = painterResource(R.drawable.ic_heart),
-                contentDescription = "favorite",
-                tint = iconTint
-            )
-        }
+    IconButton(onClick = { showDialog = true }) {
+        Icon(
+            painter = painterResource(R.drawable.ic_heart),
+            contentDescription = stringResource(R.string.favorite_button),
+            tint = iconTint
+        )
+    }
 
-        if (showDialog) {
-            AlertDialog(
-                icon = {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_broken_heart),
-                        contentDescription = "delete",
-                        tint = dialogIconTint,
-                        modifier = Modifier
-                            .size(25.dp)
-                    )
-                },
+    if (showDialog) {
 
-                title = {
-                    dialogTitle?.let {
-                        Text(
-                            text = it,
-                            color = Color.Black
-                        )
+        val dialogTitle = if (isFavorite)
+            stringResource(R.string.delete_movie)
+        else
+            stringResource(R.string.save_movie)
+
+        val dialogText = if (isFavorite)
+            stringResource(R.string.delete_from_favorites)
+        else
+            stringResource(R.string.add_to_favorites)
+
+        AlertDialog(
+            title = { Text(dialogTitle) },
+            text = { Text(dialogText) },
+
+            onDismissRequest = { showDialog = false },
+
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showDialog = false
+                        if (isFavorite) onRemoveFavorite()
+                        else onAddFavorite()
                     }
-                },
-
-                text = {
-                    Text(
-                        text = dialogText,
-                        textAlign = TextAlign.Center,
-                        color = Color.Black
-                    )
-                },
-
-                onDismissRequest = {
-                    showDialog = false
-                    onDismissRequest()
-                },
-
-                confirmButton = {
-                    TextButton(
-                        onClick = {
-                            showDialog = false
-                            onConfirmation()
-                        }
-                    ) {
-                        Text("Confirm", color = Color.Red)
-                    }
-                },
-
-                dismissButton = {
-                    TextButton(
-                        onClick = {
-                            showDialog = false
-                            onDismissRequest()
-                        }
-                    ) {
-                        Text("Dismiss", color = Color.Black)
-                    }
+                ) {
+                    Text(stringResource(R.string.confirm))
                 }
-            )
-        }
+            },
+
+            dismissButton = {
+                TextButton(
+                    onClick = { showDialog = false }
+                ) {
+                    Text(stringResource(R.string.dismiss))
+                }
+            }
+        )
     }
 }
+
 @Composable
 private fun Text1(
     text: String, modifier: Modifier = Modifier
@@ -338,4 +320,29 @@ fun Prvw() {
 //            genreIds = listOf("Action, Suspense")
 //        )
 //    )
+
+    Column(
+        modifier = Modifier
+            .background(color = Color.White)
+    ) {
+        MovieInfo(
+            movie = Movie(
+                id = 2,
+                title = "Preview Movie",
+                overview = " This is just preview data. This is just preview data. This is just preview data. This is just preview data. This is just preview data. This is just preview data. This is just preview data. This is just preview data. This is just preview data. This is just preview data.",
+                adult = false,
+                backdropPath = "/qhyyyWrHUbl6QG4udAJj17CBa5.jpg",
+                originalLanguage = "en",
+                originalTitle = "Preview Movie",
+                popularity = 0.0,
+                posterPath = "/qhyyyWrHUbl6QG4udAJj17CBa5.jpg",
+                releaseDate = "2024-01-01",
+                voteAverage = 5.365,
+                voteCount = 100,
+                video = false,
+                category = "POPULAR",
+                genreIds = listOf("Action, Suspense")
+            )
+        )
+    }
 }

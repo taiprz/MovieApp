@@ -20,6 +20,7 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
+    // TODO: IMPLEMENT THE API KEY IN THE INTERCEPTOR 
     private val interceptor : HttpLoggingInterceptor = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY
     }

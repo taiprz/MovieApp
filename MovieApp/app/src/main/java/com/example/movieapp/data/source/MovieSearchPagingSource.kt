@@ -1,6 +1,5 @@
 package com.example.movieapp.data.source
 
-import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.example.movieapp.data.utils.Category

@@ -2,4 +2,21 @@
     <string name="app_name">MovieApp</string>
     <string name="star">star icon\n</string>
     <string name="like">favorite button</string>
+    <string name="add_to_favorites">Add to favorites?</string>
+    <string name="save_movie">Save movie</string>
+    <string name="delete_movie">Delete movie</string>
+    <string name="delete_from_favorites">Delete from favorites?</string>
+    <string name="calendar_icon">Calendar icon</string>
+    <string name="vote_average">Vote Average</string>
+    <string name="return_button">Return button</string>
+    <string name="favorite_button">Favorite button</string>
+    <string name="delete_button">Delete button</string>
+    <string name="confirm">Confirm</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="your_favorites">Your Favorites</string>
+    <string name="edit_button">Edit button</string>
+    <string name="empty_list_screen">Empty List Screen</string>
+    <string name="no_movies_saved_yet">No movies saved yet</string>
+    <string name="discover_movies">Discover movies</string>
+    <string name="remove_from_favorites_button">Remove from favorites button</string>
 </resources>

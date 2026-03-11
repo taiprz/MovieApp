@@ -18,7 +18,6 @@ abstract class RepositoryModule {
     // repositories binding
 
     @Binds
-    @Singleton
     abstract fun bindMovieListRepository(
         movieListRepositoryImp : MovieListRepositoryImplementation
     ) : MovieListRepository

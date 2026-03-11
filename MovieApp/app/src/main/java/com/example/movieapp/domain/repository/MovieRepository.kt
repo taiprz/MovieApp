@@ -11,5 +11,6 @@ interface MovieRepository {
 
     suspend fun removeFavorite(movieId: Int)
 
+    // TODO: REMOVE AND IMPLEMENT FUNCTIONALITY THROUGH OTHER FUNCTIONS 
      fun isFavorite(movieId: Int): Flow<Boolean>
 }
