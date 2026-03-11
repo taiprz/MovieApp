@@ -51,6 +51,7 @@ import coil.size.Size
 import com.example.movieapp.R
 import com.example.movieapp.domain.model.Movie
 import com.example.movieapp.data.utils.Screen
+import com.example.movieapp.ui.home.MovieListState
 import com.example.movieapp.ui.theme.Parchment
 import com.example.movieapp.ui.theme.PetalFrost
 
@@ -78,8 +79,6 @@ fun FavoritesView(
 
         Header(
             movies = movieState.favoriteMovieList,
-            navController = navController,
-            favoritesViewModel = favoritesViewModel,
             editMode = editMode,
             onEditClick = { editMode = !editMode })
 
@@ -109,8 +108,6 @@ fun FavoritesView(
 @Composable
 fun Header(
     movies: List<Movie>,
-    favoritesViewModel: FavoritesViewModel,
-    navController: NavHostController,
     onEditClick: () -> Unit,
     editMode: Boolean
 ) {
@@ -124,9 +121,21 @@ fun Header(
             style = MaterialTheme.typography.headlineLarge,
             modifier = Modifier.weight(1f),
             textAlign = TextAlign.Center,
+        )
 
-            )
+        if (!movies.isEmpty()) {
+            EditButton(onEditClick, editMode)
+        }
+    }
+}
 
+@Composable
+fun EditButton(
+    onEditClick: () -> Unit,
+    editMode: Boolean
+) {
+
+    Box() {
         IconButton(
             onClick = onEditClick,
             shape = CircleShape,
@@ -136,16 +145,12 @@ fun Header(
                     shape = CircleShape
                 )
                 .size(37.dp),
-
-
-            ) {
+        ) {
             Icon(
                 painter = painterResource(R.drawable.ic_edit),
                 contentDescription = "Edit button",
                 modifier = Modifier.size(20.dp),
                 tint = if (editMode) Parchment else Color.Black
-
-
             )
         }
     }
@@ -158,12 +163,6 @@ fun FavMovieList(
     editMode: Boolean,
     favoritesViewModel: FavoritesViewModel
 ) {
-
-
-
-    if (movies.isEmpty()) {
-        EmptyListView(navController)
-    }
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(3),
@@ -185,25 +184,28 @@ fun FavMovieList(
 
 @Composable
 fun EmptyListView(navController: NavController) {
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .background(color = Parchment),
-        contentAlignment = Alignment.Center){
-
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = Parchment),
+        contentAlignment = Alignment.Center
+    ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(25.dp),
             horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-        AsyncImage(
-            modifier = Modifier
-                .size(120.dp),
-            model = R.drawable.ic_sad,
-            contentDescription = "sad face"
         )
+        {
 
+            AsyncImage(
+                modifier = Modifier
+                    .size(120.dp),
+                model = R.drawable.ic_sad,
+                contentDescription = "sad face"
+            )
 
-        Text(text = "No movies saved yet",
-            fontWeight = FontWeight.Bold,
+            Text(
+                text = "No movies saved yet",
+                fontWeight = FontWeight.Bold,
             )
 
             Button(
@@ -214,8 +216,9 @@ fun EmptyListView(navController: NavController) {
                         disabledContentColor = PetalFrost,
                         disabledContainerColor = PetalFrost
                     ),
-                onClick = { navController.popBackStack()},
-
+                onClick = {
+                    navController.popBackStack()
+                },
             ) {
                 Text("Discover movies")
             }
@@ -239,8 +242,8 @@ fun MovieItem(
                 navHostController.navigate("${Screen.Details.route}/${movie.id}")
             },
         horizontalAlignment = Alignment.CenterHorizontally
-
-    ) {
+    )
+    {
         Box() {
             AsyncImage(
                 model = favoritesViewModel.loadPoster(movie),

@@ -69,7 +69,10 @@ fun DetailsView(
     ) {
 
         if (detailState.isLoading) {
-            CircularProgressIndicator()
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .fillMaxSize()
+            )
         }
 
         detailState.movie?.let { movie ->
@@ -121,9 +124,11 @@ fun MovieDetails(
 
         Text(
             movie.overview,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth(),
-            )
+            textAlign = TextAlign.Justify,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
+        )
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -219,117 +224,83 @@ fun FavoriteButton(
     onConfirmation: () -> Unit,
     isFavorite: State<Boolean>
 ) {
+
+    var showDialog by remember { mutableStateOf(false) }
+    val iconTint = if (isFavorite.value) PetalFrost else Color.Black
+    val dialogIconTint = if (isFavorite.value) Color.Black else Color.Red
+
     Row(
         modifier = Modifier.padding(20.dp),
         horizontalArrangement = Arrangement.Center
     ) {
-        var showDialog by remember { mutableStateOf(false) }
 
-        if (isFavorite.value) {
+        IconButton(onClick = { showDialog = true }) {
+            Icon(
+                painter = painterResource(R.drawable.ic_heart),
+                contentDescription = "favorite",
+                tint = iconTint
+            )
+        }
 
-            IconButton(
-                onClick = { showDialog = true },
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_heart),
-                    contentDescription = stringResource(id = R.string.like),
-                    tint = PetalFrost
-                )
-            }
-
-            if (showDialog) {
-                AlertDialog(
-                    icon = {
+        if (showDialog) {
+            AlertDialog(
+                icon = {
                     Icon(
-                        painter = painterResource(R.drawable.ic_heart),
-                        contentDescription = stringResource(id = R.string.like),
-                        tint = Color.Black
+                        painter = painterResource(R.drawable.ic_broken_heart),
+                        contentDescription = "delete",
+                        tint = dialogIconTint,
+                        modifier = Modifier
+                            .size(25.dp)
                     )
-                }, title = {
-                    if (dialogTitle != null) {
-                        Text(text = dialogTitle)
-                    }
-                }, text = {
-                    Text(
-                        dialogText, textAlign = TextAlign.Center
-                    )
-                }, onDismissRequest = {
-                    showDialog = false
-                    onDismissRequest()
-                }, confirmButton = {
-                    TextButton(
-                        onClick = {
-                            showDialog = false
-                            onConfirmation()
-                        }) {
-                        Text(text = "Confirm",
+                },
+
+                title = {
+                    dialogTitle?.let {
+                        Text(
+                            text = it,
                             color = Color.Black
-                            )
+                        )
                     }
-                }, dismissButton = {
-                    TextButton(
-                        onClick = {
-                            showDialog = false
-                            onDismissRequest()
-                        }) {
-                        Text(text = "Dismiss",
-                            color = Color.Black)
-                    }
-                })
-            }
+                },
 
-
-        } else {
-            IconButton(
-                onClick = { showDialog = true },
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_heart),
-                    contentDescription = stringResource(id = R.string.like),
-                    tint = Color.Black
-                )
-            }
-
-            if (showDialog) {
-                AlertDialog(icon = {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_heart),
-                        contentDescription = stringResource(id = R.string.like),
-                        tint = Color.Red
-                    )
-                }, title = {
-                    if (dialogTitle != null) {
-                        Text(text = dialogTitle)
-                    }
-                }, text = {
+                text = {
                     Text(
-                        dialogText, textAlign = TextAlign.Center
+                        text = dialogText,
+                        textAlign = TextAlign.Center,
+                        color = Color.Black
                     )
-                }, onDismissRequest = {
+                },
+
+                onDismissRequest = {
                     showDialog = false
                     onDismissRequest()
-                }, confirmButton = {
+                },
+
+                confirmButton = {
                     TextButton(
                         onClick = {
                             showDialog = false
                             onConfirmation()
-                        }) {
-                        Text("Confirm")
+                        }
+                    ) {
+                        Text("Confirm", color = Color.Red)
                     }
-                }, dismissButton = {
+                },
+
+                dismissButton = {
                     TextButton(
                         onClick = {
                             showDialog = false
                             onDismissRequest()
-                        }) {
-                        Text("Dismiss")
+                        }
+                    ) {
+                        Text("Dismiss", color = Color.Black)
                     }
-                })
-            }
+                }
+            )
         }
     }
 }
-
 @Composable
 private fun Text1(
     text: String, modifier: Modifier = Modifier
@@ -344,38 +315,6 @@ private fun Text1(
     )
 }
 
-//@Composable
-//fun details(movie: Movie) {
-//    Row(
-//        modifier = Modifier.background(Color.White), horizontalArrangement = Arrangement.Center
-//    ) {
-//        Box(
-//            modifier = Modifier.size(24.dp),
-//        ) {
-//            AsyncImage(
-//                modifier = Modifier,
-//                model = R.drawable.ic_calendar,
-//                contentDescription = "Calendar icon",
-//                contentScale = ContentScale.Fit
-//            )
-//        }
-//        Text1(movie.releaseDate)
-//        Text("|")
-//        Box(
-//            modifier = Modifier
-//                .padding(0.dp)
-//                .size(24.dp)
-//        ) {
-//            AsyncImage(
-//                modifier = Modifier,
-//                model = R.drawable.ic_star,
-//                contentDescription = "Star icon",
-//                contentScale = ContentScale.Fit
-//            )
-//        }
-//        Text1(movie.voteAverage.toString())
-//    }
-//}
 
 @Preview(showBackground = true)
 @Composable
